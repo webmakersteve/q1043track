@@ -125,8 +125,15 @@ var oldlog = console.log;
 console.log = function(string) {
 	date = new Date();
 	time = date.getMonth() + "/" + date.getDay() + " " + date.getHours() + ":" + date.getMinutes();
-	oldlog( time + " --\t" + string );
+	if (typeof(string) != 'object' && typeof(string) != 'array')
+		oldlog( time + " --\t" + string );
+	else {
+		oldlog(time);
+		oldlog(string);
+	}
+	
 };
+console.oldlog = oldlog;
 
 module.exports.start = function(callback) {
 
