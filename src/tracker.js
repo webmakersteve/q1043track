@@ -69,7 +69,8 @@ var RadioReader = function() {
 		for (x in filtered) {
 			if (filtered[x] !== undefined && filtered[x].title !== undefined) {
 				this.db.addSong( filtered[x] );
-				this.cache.songs.push(filtered[x]);
+                this.cache.songs.push(filtered[x]);
+
 			}
 		}
 
@@ -79,7 +80,7 @@ var RadioReader = function() {
 		this.writeTo(path);
 
 		//end logic
-	}
+	};
 
 	this.writeTo = function( path ) {
 		var fs = require('fs');
@@ -98,7 +99,7 @@ var RadioReader = function() {
 			console.log("Couldn't write this time");
 			console.log(e);
 		}
-	}
+	};
 
 	return this;
 };
@@ -107,10 +108,10 @@ Array.prototype.fix = function(obj) {
 	if (a == null || a.length < 1) {x = this.reverse();} else {
 		var titles = [];
 		for (x in a) {
-			if (a[x].title == null || a[x].title == undefined) {} else {titles.push(a[x].title);}
+			if (a[x].title === null || a[x].title === undefined) {} else {titles.push(a[x].title);}
 		}
 		x = this.filter(function(i) {
-			if (i.title == null || i.title == undefined) return false;
+			if (i.title === null || i.title === undefined) return false;
 			if (titles.indexOf(i.title) > -1) return false; //get rid of duplicate songs
 			return true;
 		});

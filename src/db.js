@@ -27,27 +27,39 @@ var TrackDatabase = function() {
 			this.currentClient = theClient;
 			callback(false,theClient);
 		});
-	}
-}
+	};
+};
 
 
-module.exports.addSong = function(data) {
+module.exports.addSong = function(data,callback) {
 	x = new TrackDatabase();
 	x.selectDB('q1043', function(err,db) {
-		if (err) return false;
+		if (err) callback("NOT IMPLEMENTED", false);
 		db.collection('plays', function(err,collection) {
-			songs = collection.find().toArray(function(err,s) {
-				if (err) console.log(err);
-				for (x in s) console.log(s[x]);
+			if (err) callback("NOT IMPLEMENTED", false);
 
-			});
-			if (err) return false;
-			collection.insert({name: data.title}, function(err) {
-				//if (err) require('./events').activate('error', err);
-				console.log('Writing song ' + data.title);
-			});
+            uuid = data.time + "-" + data.artist + "-" + data.title;
+            uuid = require('crypto').createHash('md5').update(uuid).digest('hex');
+            tmp = new Date(data.time);
+            tmp.setHours(tmp.getHours() - 1);
+
+            collection.findOne({name: data.title, artist: data.artist, date: {$lte: data.time, $gt: tmp.toJSON()}}, function(err, item) {
+
+               if (item == null) {
+
+                  collection.insert({name: data.title, artist: data.artist, date: data.time, uuid: uuid}, function(err) {
+                    //if (err) require('./events').activate('error', err);
+                    console.log('Writing song ' + data.title);
+                    if (callback) callback(false,collection);
+                });
+               } else {
+                   console.log('found it: '+item.name);
+                   if (callback) callback(false,collection);
+               }
+            });
+
 		});
 	});
 
 
-}
+};
