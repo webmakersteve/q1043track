@@ -44,7 +44,10 @@ module.exports.addSong = function(data,callback) {
             tmp.setHours(tmp.getHours() - 1);
 
             collection.findOne({name: data.title, artist: data.artist, date: {$lte: data.time, $gt: tmp.toJSON()}}, function(err, item) {
-
+                meta = require('./spotify');
+                meta.getMeta(data, function(err,meta) {
+                   console.log(meta);
+                });
                if (item == null) {
 
                   collection.insert({name: data.title, artist: data.artist, date: data.time, uuid: uuid}, function(err) {
@@ -55,6 +58,27 @@ module.exports.addSong = function(data,callback) {
                } else {
                    console.log('found it: '+item.name);
                    if (callback) callback(false,collection);
+               }
+            });
+
+		});
+	});
+
+
+};
+
+module.exports.getMeta = function(data,callback) {
+	x = new TrackDatabase();
+	x.selectDB('q1043', function(err,db) {
+		if (err) callback("NOT IMPLEMENTED", false);
+		db.collection('meta', function(err,collection) {
+			if (err) callback("NOT IMPLEMENTED", false);
+
+            collection.findOne({song: data.title, artist: data.artist}, function(err, item) {
+               if (item == null) {
+                   callback(false,false);
+               } else {
+                   if (callback) callback(false,item);
                }
             });
 
